@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const productData = await Product.findAll(req.params.id, {
-      include: [{ model: Category }, { model: Tag }, { ProductTag }]
+      include: [{ model: Category }, { model: Tag }]
     });
     res.status(200).json(productData);
   } catch (err) {
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const productData = await Product.findByPk(req.params.id, {
-      include: [{ model: Category }, { model: Tag },]
+      include: [{ model: Category }, { model: Tag }]
     });
     res.status(200).json(productData);
   } catch (err) {
@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // create a new category
   try {
-    const productData = await Product.create(req.body, {
+    const productData = await Product.create({
       // include: [{ model: ProductTag }],
       product_name: req.body.product_name,
       price: req.body.price,
@@ -80,15 +80,23 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   // update a category by its `id` value
   try {
-    const productData = await Product.update(req.body.id, {
-      where: {
-        id: req.body.id,
+    const productData = await Product.update(
+      {
+        product_name: req.body.product_name,
+        price: req.body.price,
+        stock: req.body.stock,
+        category_id: req.body.category_id
       },
-    });
-    res.status(200).json(productData);
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
+res.status(200).json(productData);
   } catch (err) {
-    res.status(500).json(err);
-  }
+  res.status(500).json(err);
+}
 });
 
 router.delete('/:id', async (req, res) => {
